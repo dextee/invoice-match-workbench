@@ -2,7 +2,7 @@
 
 Compare supplier invoices with purchase orders and goods receipts before preparing an accounting draft. An operations reviewer can trace each exception to its source CSV row, record a decision and regenerate the draft locally.
 
-[![Workbench checks](https://github.com/dextee/invoice-match-workbench/actions/workflows/checks.yml/badge.svg)](https://github.com/dextee/invoice-match-workbench/actions/workflows/checks.yml)
+The [v0.1.0 release](https://github.com/dextee/invoice-match-workbench/releases/tag/v0.1.0) includes the generated HTML report and matching JSON draft for inspection.
 
 ![Generated report showing S$587 submitted, S$215 ready and a receipt shortage on INV-1002](docs/invoice-review.png)
 
@@ -69,4 +69,4 @@ A team can use the demo to examine three-way matching before deciding how its ow
 python -m unittest discover -s tests -v
 ```
 
-The tests cover fixture totals, source rows, duplicate billing across invoices, malformed imports, repeat and concurrent runs, decision persistence, scoped approvals, changed inputs and escaped report text. GitHub Actions runs the suite and the offline demo on Windows and Linux.
+The tests cover fixture totals, source rows, duplicate billing across invoices, malformed imports, repeat and concurrent runs, decision persistence, scoped approvals, changed inputs and escaped report text.
