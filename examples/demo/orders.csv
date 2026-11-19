@@ -1,0 +1,6 @@
+order_line,supplier,item,ordered_qty,unit_price_sgd
+PO-51/1,Paper Harbour Demo,Archive box,8,25.00
+PO-51/2,Paper Harbour Demo,Label pack,2,7.50
+PO-52/1,Studio Supply Demo,Desk tray,12,18.50
+PO-53/1,Studio Supply Demo,Storage sleeve,4,14.00
+PO-54/1,North Bay Demo,Clip set,3,30.00
