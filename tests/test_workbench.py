@@ -6,11 +6,12 @@ import shutil
 import sqlite3
 import tempfile
 import unittest
+from unittest.mock import patch
 from contextlib import closing
 from pathlib import Path
 
 import matcher
-from workbench import ROOT, process
+from workbench import ROOT, main, process
 
 
 class WorkbenchTests(unittest.TestCase):
@@ -110,6 +111,28 @@ class WorkbenchTests(unittest.TestCase):
         for key in ("INV-1001", "INV-1005"):
             self.assertEqual(matcher.issues(data["invoices"][key]), {"over_order", "short_receipt"})
         self.assertEqual(self.run_workbench()[1]["total_minor"], 0)
+
+    def test_duplicate_billing_demo_and_report_launch(self):
+        self.inputs = ROOT / "examples" / "duplicate-billing"
+        output, draft = self.run_workbench()
+        self.assertEqual([entry["invoice"] for entry in draft["invoices"]], ["INV-2003", "INV-2004"])
+        self.assertEqual(draft["total_minor"], 2000)
+        report = output / "report.html"
+        html = report.read_text(encoding="utf-8")
+        panel = html.split("<h2>Invoices sharing a quantity hold</h2>")[1].split("</section>")[0]
+        for index in (1, 2):
+            self.assertIn(f'<a href="#invoice-{index}">INV-200{index}</a> · invoices.csv row {index+1} · 4 billed', panel)
+        self.assertNotIn("PO-81/2", panel)
+        command = ["demo", "--input", str(self.inputs), "--workspace", str(self.ws)]
+        with patch("workbench.webbrowser.open", return_value=True) as launch, patch("builtins.print"):
+            self.assertEqual(main(command), 0)
+            launch.assert_not_called()
+            self.assertEqual(main(command + ["--open-report"]), 0)
+            launch.assert_called_once_with(report.as_uri(), new=2)
+        with patch("workbench.webbrowser.open", return_value=False), patch("builtins.print") as message:
+            self.assertEqual(main(command + ["--open-report"]), 0)
+            self.assertTrue(any("printed path" in str(call) for call in message.call_args_list))
+            self.assertTrue(report.is_file())
 
     def test_identity_arithmetic_missing_order(self):
         def change(rows):

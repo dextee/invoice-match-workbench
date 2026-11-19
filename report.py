@@ -25,6 +25,30 @@ def line_evidence(line):
     return flags + '<ul class="trace source">' + "".join(f"<li>{entry}</li>" for entry in details) + "</ul>"
 
 
+def shared_billing_evidence(groups):
+    by_order = {}
+    for index, invoice in enumerate(groups.values(), 1):
+        for line in invoice["lines"]:
+            if "over_order" in line["issues"] or "short_receipt" in line["issues"]:
+                row = line["invoice_line"]
+                by_order.setdefault(row["order_line"], []).append((index, row))
+    panels = []
+    for order, entries in by_order.items():
+        if len({index for index, row in entries}) < 2:
+            continue
+        rows = "".join(
+            f'<li><a href="#invoice-{index}">{esc(row["invoice"])}</a> · '
+            f'{esc(row["source"])} · {row["billed_qty"]} billed</li>'
+            for index, row in entries
+        )
+        panels.append(f'<article class="card"><h3>{esc(order)}</h3>'
+                      f'<ul class="trace source">{rows}</ul></article>')
+    if not panels:
+        return ""
+    return ('<section class="detail"><h2>Invoices sharing a quantity hold</h2>'
+            + "".join(panels) + '</section>')
+
+
 def render(batch, data, reviews):
     groups = data["invoices"]
     states = {key: status(value, reviews.get(key)) for key, value in groups.items()}
@@ -58,4 +82,4 @@ def render(batch, data, reviews):
 <section class="stats" aria-label="Batch totals">{stats}</section>
 <div class="grid"><section class="card"><h2>Invoice queue</h2>{''.join(rows)}</section>
 <section class="card"><h2>Line evidence</h2><div class="evidence"><h3>{esc(key)} · {esc(line['invoice_line']['item'])}</h3><p>{esc(line['invoice_line']['supplier'])} · {esc(line['invoice_line']['order_line'])}</p><div class="compare">{compare}</div>{line_evidence(line)}</div></section></div>
-<section class="detail"><h2>Invoice details and decisions</h2>{''.join(details)}</section><footer>All amounts in SGD. Draft eligibility applies to this input snapshot.</footer></main></body></html>"""
+{shared_billing_evidence(groups)}<section class="detail"><h2>Invoice details and decisions</h2>{''.join(details)}</section><footer>All amounts in SGD. Draft eligibility applies to this input snapshot.</footer></main></body></html>"""

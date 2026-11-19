@@ -7,6 +7,7 @@ import os
 import sqlite3
 import sys
 import tempfile
+import webbrowser
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -113,6 +114,7 @@ def main(argv=None):
     parser.add_argument("command", choices=["demo", "import", "review", "export"])
     parser.add_argument("--input", type=Path, default=ROOT / "examples" / "demo", help="folder containing three CSV files")
     parser.add_argument("--workspace", type=Path, default=Path(".runs"), help="local state and output directory")
+    parser.add_argument("--open-report", action="store_true", help="open the completed HTML report in the default browser")
     parser.add_argument("--invoice")
     parser.add_argument("--decision", choices=["defer", "reject", "accept-price", "reopen"])
     parser.add_argument("--reviewer")
@@ -128,6 +130,13 @@ def main(argv=None):
     except (ValueError, OSError, sqlite3.Error, csv.Error) as exc:
         parser.exit(1, f"Input or workspace error: {exc}\n")
     print(f"Draft: {len(draft['invoices'])} invoice(s), {money(draft['total_minor'])}\nReport: {output / 'report.html'}\nDraft file: {output / 'draft.json'}")
+    if args.open_report:
+        try:
+            opened = webbrowser.open((output / "report.html").as_uri(), new=2)
+        except (OSError, webbrowser.Error):
+            opened = False
+        if not opened:
+            print("Open the report using the printed path.", file=sys.stderr)
     return 0
 
 

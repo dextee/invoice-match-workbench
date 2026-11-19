@@ -1,0 +1,5 @@
+invoice,line,order_line,supplier,item,billed_qty,unit_price_sgd,line_total_sgd
+INV-2001,1,PO-81/1,Studio Supply Demo,Desk mat,4,15.00,60.00
+INV-2002,1,PO-81/1,Studio Supply Demo,Desk mat,4,15.00,60.00
+INV-2003,1,PO-81/2,Studio Supply Demo,Folder,1,10.00,10.00
+INV-2004,1,PO-81/2,Studio Supply Demo,Folder,1,10.00,10.00

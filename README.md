@@ -2,7 +2,7 @@
 
 Compare supplier invoices with purchase orders and goods receipts before preparing an accounting draft. An operations reviewer can trace each exception to its source CSV row, record a decision and regenerate the draft locally.
 
-The [v0.1.0 release](https://github.com/dextee/invoice-match-workbench/releases/tag/v0.1.0) includes the generated HTML report and matching JSON draft for inspection.
+The [v0.1.1 release](https://github.com/dextee/invoice-match-workbench/releases/tag/v0.1.1) includes the generated HTML report, its matching JSON draft and a second report tracing duplicate billing.
 
 ![Generated report showing S$587 submitted, S$215 ready and a receipt shortage on INV-1002](docs/invoice-review.png)
 
@@ -18,6 +18,8 @@ python workbench.py demo
 
 On Windows, `py` can replace `python`. The command works offline using Python's standard library. Open the printed **report.html** path in a browser. The adjacent **draft.json** contains eligible invoice lines in SGD cents. Every supplier, document and value in the example is synthetic.
 
+To open the report in your default browser as part of the same command, run `python workbench.py demo --open-report`.
+
 | Invoice | Submitted | Initial result | Evidence |
 | --- | ---: | --- | --- |
 | INV-1001 | S$215.00 | Ready | Both lines agree with their orders and receipts. |
@@ -26,6 +28,16 @@ On Windows, `py` can replace `python`. The command works offline using Python's 
 | INV-1004 | S$90.00 | Held | The order exists. The batch contains no receipt for its clips. |
 
 The initial draft contains S$215.00. The other three invoices account for S$372.00, giving a submitted total of S$587.00. The report links the desk-tray exception to [invoice row 4](examples/demo/invoices.csv#L4), [order row 4](examples/demo/orders.csv#L4) and [receipt rows 4 and 5](examples/demo/receipts.csv#L4-L5).
+
+### Trace two bills against one delivery
+
+Four desk mats arrive. Two different invoice numbers each claim all four mats at S$15 each. Run the [synthetic duplicate-billing example](examples/duplicate-billing) and open **Invoices sharing a quantity hold** to follow the two source rows.
+
+```sh
+python workbench.py demo --input examples/duplicate-billing --open-report
+```
+
+INV-2001 and INV-2002 stay out of the draft pending review. The source rows show eight mats billed against four ordered and received. Two more invoices split a two-folder delivery into one folder each, so both qualify. The draft contains **S$20 of S$140**. [Open the generated example from the release](https://github.com/dextee/invoice-match-workbench/releases/download/v0.1.1/duplicate-billing-report.html)
 
 ## Resolve exceptions
 
@@ -71,4 +83,4 @@ A team can use the demo to examine three-way matching before deciding how its ow
 python -m unittest discover -s tests -v
 ```
 
-The tests cover fixture totals, source rows, duplicate billing across invoices, malformed imports, repeat and concurrent runs, decision persistence, scoped approvals, changed inputs and escaped report text.
+The tests cover fixture totals, source rows, duplicate billing across invoices, legitimate split billing, report launch, malformed imports, repeat and concurrent runs, decision persistence, scoped approvals, changed inputs and escaped report text.
