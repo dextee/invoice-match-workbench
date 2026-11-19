@@ -8,6 +8,8 @@ The [v0.1.0 release](https://github.com/dextee/invoice-match-workbench/releases/
 
 ## Run the example
 
+For a timed first visit, use the [five-minute exercise](docs/first-run.md) to trace a held invoice and record where setup or interpretation slows you down.
+
 With Python 3.11 or later, open a terminal in this checkout and run:
 
 ```sh
