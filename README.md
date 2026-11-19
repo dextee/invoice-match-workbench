@@ -4,6 +4,8 @@ Compare supplier invoices with purchase orders and goods receipts before prepari
 
 The [v0.1.1 release](https://github.com/dextee/invoice-match-workbench/releases/tag/v0.1.1) includes the generated HTML report, its matching JSON draft and a second report tracing duplicate billing.
 
+**Need this for your finance team?** Tell VYR where invoices arrive, which accounting system you use and who approves exceptions. We can scope an AI agent around those handoffs. [Discuss your invoice workflow](https://vyrwork.com/contact?utm_source=github&utm_medium=referral&utm_campaign=github_profile&utm_content=invoice_workbench_enquiry)
+
 ![Generated report showing S$587 submitted, S$215 ready and a receipt shortage on INV-1002](docs/invoice-review.png)
 
 ## Run the example
